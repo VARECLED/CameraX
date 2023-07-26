@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private var camera: Camera? = null
     private lateinit var photoFile : File
-    
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
