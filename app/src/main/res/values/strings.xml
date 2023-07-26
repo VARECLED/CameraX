@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CameraX</string>
+    <string name="txtVacio"></string>
+    <string name="image">Image</string>
+</resources>
