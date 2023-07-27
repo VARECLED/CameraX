@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.Camera
 import com.example.camerax.databinding.ActivityMainBinding
@@ -103,7 +105,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun tomarFoto() {
         val imageCapture = imageCapture ?: return
         photoFile = createImageFile()
@@ -128,33 +129,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoGuardarFoto(photoFile: File) {
+        val dialogView = layoutInflater.inflate(R.layout.vista_previa, null)
+        val imagePreview = dialogView.findViewById<ImageView>(R.id.image_preview)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btn_save)
+
+        // Cargar la foto capturada en el ImageView de la vista previa del diálogo
+        Glide.with(this)
+            .load(photoFile)
+            .into(imagePreview)
+
         val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.apply {
-            setTitle("Guardar Foto")
-            setMessage("¿Deseas guardar esta foto?")
-            setPositiveButton("Guardar") { dialog, _ ->
-                // El usuario eligió guardar la foto
-                // Llama al método para guardar la foto
-                guardarFoto(photoFile)
+        alertDialogBuilder.setView(dialogView)
 
-                Glide.with(this@MainActivity)
-                    .load(photoFile)
-                    .into(binding.btnCamera)
+        val dialog = alertDialogBuilder.create()
+        dialog.show()
 
-                binding.txtTitOpcion.setText(photoFile.toString())
-                Toast.makeText(applicationContext, "La foto se capturó exitosamente", Toast.LENGTH_SHORT).show()
+        btnCancel.setOnClickListener {
+            // El usuario eligió cancelar, elimina el archivo de la foto
+            eliminarFoto(photoFile)
+            dialog.dismiss()
+        }
 
-                dialog.dismiss()
-            }
-            setNegativeButton("Cancelar") { dialog, _ ->
-                // El usuario eligió no guardar la foto
-                // Elimina el archivo de la foto
-                eliminarFoto(photoFile)
-                binding.txtTitOpcion.setText(photoFile.toString())
-                dialog.dismiss()
-            }
-            create()
-            show()
+        btnSave.setOnClickListener {
+            // El usuario eligió guardar la foto
+            // Llama al método para guardar la foto
+            guardarFoto(photoFile)
+            binding.txtTitOpcion.setText(photoFile.toString())
+            dialog.dismiss()
         }
     }
 
